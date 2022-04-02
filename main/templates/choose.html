@@ -7,50 +7,69 @@
 
 {%block content%}
 
-<main class="text-left">
-    <form method="post" class="">
-        {% csrf_token %}
-        <div class="col-sm-2 mr-auto pt-10">
-            {{form.as_p}}
-        </div>
-        <div class="col-sm-2 mr-auto pt-10">
-            <button type="submit" class="w-20 btn btn-sm btn-primary">Применить</button>
-        </div>
-    </form>
-</main>
-
-<div class="col-sm-1">
-    {% for i in page_obj %}
-    <div class="card" style="width: 18rem;">
-        <img src={{i.photo}}" class="card-img-top" alt="...">
-        <div class="card-body">
-            <h4 class="card-title">{{i.first_name}} {{i.last_name}}</h4>
-            <p class="card-text">{{i.description}}</p>
-            {%for j in i.tag.all%}
-                <p class="card-footer">{{j}}</p>
-            {% endfor %}
-            <a href="{{i.get_absolute_url}}" class="btn btn-primary">Перейти</a>
+<div class="col-lg-8">
+<div class="row">
+    {%for i in page_obj%}
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <a href="{{ i.get_absolute_url }}"><img class="card-img-top"
+                                                    src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg"
+                                                    alt="..."/></a>
+            <div class="card-body">
+                <div class="small text-muted">{{ i.faculty.name }}, {{ i.grade.name }} курс</div>
+                <h2 class="card-title h4">{{ i.first_name }} {{ i.last_name }}</h2>
+                <p class="card-text">{{ i.description }}</p>
+                <a class="btn btn-primary" href="{{ i.get_absolute_url }}">Перейти</a>
+            </div>
         </div>
     </div>
-    {% endfor %}
+    {%endfor%}
+
+    <nav aria-label="Pagination">
+        <hr class="my-0"/>
+        <ul class="pagination justify-content-center my-4">
+            <li class="page-item active">
+                <a class="page-link" href="?page=1" tabindex="-1" aria-disabled="true">1</a>
+            </li>
+            {% if page_obj.has_previous %}
+            <li class="page-item ">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1"
+                   aria-disabled="true">Назад</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Назад</a>
+            </li>
+            {% endif %}
+            <li class="page-item disabled"><a class="page-link" href="#!">{{ page_obj.number }}</a></li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" tabindex="-1" aria-disabled="true">Вперед</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Вперед</a>
+            </li>
+            {% endif %}
+            <li class="page-item active">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" tabindex="-1" aria-disabled="true">{{page_obj.paginator.num_pages}}</a>
+            </li>
+
+
+        </ul>
+    </nav>
 </div>
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-
-        {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">next</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
 </div>
-
-
+<div class="col-lg-4">
+    <div class="card mb-4">
+        <div class="card-header">Фильтр</div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="w-20 btn btn-sm btn-primary">Применить</button>
+            </form>
+        </div>
+    </div>
+</div>
 {%endblock%}

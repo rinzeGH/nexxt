@@ -133,7 +133,7 @@ class ProfileView(LoginRequiredMixin, HaveProfileMixin, TemplateView):
 def choose(request):
     user = request.user
     profiles = Profile.objects.prefetch_related('tag').exclude(user=user)
-    paginator = Paginator(profiles, 15)
+    paginator = Paginator(profiles, 4)
     if request.method == 'POST':
         form = FilterForm(request.POST)
         if form.is_valid():
@@ -142,7 +142,7 @@ def choose(request):
                                        grade=form.cleaned_data['grade'],
                                        faculty=form.cleaned_data['faculty'])
             profiles = profiles.filter(tag__in=form.cleaned_data['tag']).distinct()
-            paginator = Paginator(profiles, 15)
+            paginator = Paginator(profiles, 4)
     else:
         form = FilterForm
     page_number = request.GET.get('page')
@@ -179,12 +179,12 @@ def vk_auth(request):
 
 
 def vk_auth_confirm(request):
-    respones = vk_autentification(request)
-    if 'error' in respones:
+    response = vk_autentification(request)
+    if 'error' in response:
         return redirect('home')
     else:
         profile = Profile.objects.get(user=request.user)
-        profile.vk_url = respones['user_id']
+        profile.vk_url = response['user_id']
         profile.save()
         return redirect('profile', prof_slug=profile.slug)
 
