@@ -1,4 +1,4 @@
-from django.contrib.auth import logout, login
+from django.contrib.auth import login as login_django, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render, redirect
@@ -36,7 +36,7 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             if user.email_verify:
-                login(request, user)
+                login_django(request, user)
                 return redirect('home')
             else:
                 send_email_for_verify(request, user, is_password=False)
@@ -51,6 +51,7 @@ def singup(request):
         form = SingupForm(request.POST)
         if form.is_valid():
             form.save()
+            Profile.objects.create(user= form.cleaned_data[''], slug= form.cleaned_data['username'].Tolower)
             user = User.objects.get(username=form.cleaned_data['username'])
             send_email_for_verify(request, user, is_password=False)
             return render(request, 'auth/email_verify.html')
@@ -132,7 +133,7 @@ class ProfileView(LoginRequiredMixin, HaveProfileMixin, TemplateView):
 @login_required()
 def choose(request):
     user = request.user
-    profiles = Profile.objects.prefetch_related('tag').exclude(user=user)
+    profiles = Profile.objects.prefetch_related('tag').select_related('grade', 'faculty').exclude(user=user)
     paginator = Paginator(profiles, 4)
     if request.method == 'POST':
         form = FilterForm(request.POST)
@@ -166,8 +167,9 @@ class CreateProfile(LoginRequiredMixin, View):
             return redirect('home')
 
     def get(self, request):
-        form = ProfileForm()
-        context = {'form': form, 'user': request.user}
+        user = request.user
+        form = ProfileForm(instance=Profile.objects.get(user=user))
+        context = {'form': form, 'user': user}
         return render(request, 'profile/prof_create.html', context=context)
 
 

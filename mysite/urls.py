@@ -7,6 +7,7 @@ from mysite import settings
 
 urlpatterns = [
     path('', include('main.urls')),
+    path('chat/', include('room.urls')),
     path('admin/', admin.site.urls),
 
 

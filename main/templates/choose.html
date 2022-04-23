@@ -67,7 +67,9 @@
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
+                <a href="{% url 'choose' %}" class="w-20 btn btn-sm btn-primary">Сбросить</a>
                 <button type="submit" class="w-20 btn btn-sm btn-primary">Применить</button>
+
             </form>
         </div>
     </div>

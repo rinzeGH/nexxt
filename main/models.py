@@ -17,8 +17,8 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=30, verbose_name='Фамилия')
     description = models.TextField(max_length=400, verbose_name='Описание')
     photo = models.ImageField(max_length=100, upload_to='photo/%Y/%m/%d/', verbose_name='Фото')
-    views = models.IntegerField(default=0,verbose_name='Количество просмотров')
-    vk_url = models.CharField('Ссылка ВК',default=None, max_length=50,blank=True)
+    views = models.IntegerField(default=0, verbose_name='Количество просмотров')
+    vk_url = models.CharField('Ссылка ВК', default=None, max_length=50, blank=True)
 
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     gender = models.ForeignKey('Gender', related_name='profile', on_delete=models.PROTECT, verbose_name='Пол')
@@ -26,6 +26,7 @@ class Profile(models.Model):
     grade = models.ForeignKey('Grade', related_name='profile', on_delete=models.PROTECT, verbose_name='Курс')
     faculty = models.ForeignKey('Faculty', related_name='profile', on_delete=models.PROTECT, verbose_name='Факультет')
     tag = models.ManyToManyField('Tag', related_name='profile', blank=True, null=True)
+    rooms = models.ManyToManyField('room.Room', related_name='profile', blank=True, null=True)
 
     slug = models.SlugField(max_length=30, unique=True, verbose_name='индивидуальный URL')
 
@@ -39,9 +40,10 @@ class Profile(models.Model):
     def __str__(self):
         return self.slug
 
+
 class ProfileViews(models.Model):
     username = models.CharField(max_length=30)
-    profiles = models.ForeignKey(Profile, on_delete=models.PROTECT,related_name='views_list')
+    profiles = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name='views_list')
 
 
 class Gender(models.Model):

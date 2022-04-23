@@ -29,14 +29,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'main.apps.MainConfig',
+    'room.apps.RoomConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'debug_toolbar',
-    'main.apps.MainConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'oauth2_provider',
@@ -78,6 +80,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
+ASGI_APPLICATION = 'mysite.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -164,3 +167,4 @@ AUTH_USER_MODEL = 'main.User'
 SOCIAL_AUTH_VK_OAUTH2_KEY = '8102633'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 'hKEwVZ5p36LRx7MErq2d'
 SOCIAL_AUTH_VK_REDIRECT_URL = 'http://127.0.0.1:8000/auth/vk/confirm'
+

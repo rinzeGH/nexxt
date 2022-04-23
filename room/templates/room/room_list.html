@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load tags%}
+{% block user_buttons %}
+{% navbar_user_buttons request user profile%}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<hr>
+<div class="container bootstrap snippets bootdey">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box no-header clearfix">
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <table class="table user-list">
+                            <thead>
+                                <tr>
+                                <th><span>Пользователь</span></th>
+                                <th><span>Факультет</span></th>
+                                <th class="text-center"><span>Онлайн</span></th>
+                                <th><span></span></th>
+                                <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    {% for room in rooms %}
+                                    {% for profile in room.related_query %}
+                                    {% if profile_owner != profile %}
+                                    <td>
+                                        {% if profile.photo %}
+                                        <img src="{{profile.photo.url}}" alt="No photo"
+                                        class="rounded-circle" width="150">
+
+                                        {% else %}
+                                        <img
+                                        src="https://avatars.mds.yandex.net/get-pdb/1996600/d1725ec1-41d3-4b2c-ab24-91ec603557bf/s1200" alt="Admin"
+                                        class="rounded-circle" width="150">
+                                        {%endif%}
+
+                                        <a href="{{profile.get_absolute_url}}" class="user-link">{{profile.first_name}} {{profile.last_name}}</a>
+                                        <span class="user-subhead"></span>
+                                    </td>
+                                    <td>{{ profile.faculty.name }}, {{ profile.grade.name }}</td>
+                                    <td class="text-center">
+                                        <span class="label label-default">Онлайн</span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'room_detail' room_slug=room.slug %}">Чат</a>
+                                    </td>
+                                    <td style="width: 20%;">
+                                        <a href="#" class="table-link text-warning">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                        <a href="#" class="table-link text-info">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                        <a href="#" class="table-link danger">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endfor %}
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

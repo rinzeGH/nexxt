@@ -19,7 +19,7 @@ def send_email_for_verify(request, user,is_password):
     }
 
     message = render_to_string('auth/change_password_letter.html' if is_password
-                               else 'confirm_email_letter.html', context=context)
+                               else 'auth/confirm_email_letter.html', context=context)
     email = EmailMessage(
         'Подтверждение',
         message,

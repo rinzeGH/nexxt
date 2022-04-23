@@ -3,7 +3,9 @@
         {% if is_user %}
         {% if is_profile %}
 
-
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'room_list' %}">Чаты</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link active" href="{{profile.get_absolute_url}}">{{user.username}}</a>
         </li>
