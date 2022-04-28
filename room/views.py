@@ -1,12 +1,16 @@
 from django.shortcuts import render
-from .models import Room
+from .models import Room, Message
 from main.models import Profile
 
 
 def room_detail(request, room_slug):
-    room = Room.objects.get(slug=room_slug)
+    room = Room.objects.prefetch_related('profile').get(slug=room_slug)
+    user = request.user
+    messages = Message.objects.select_related('profile').filter(room=room)[:25]
     context = {
-        'room': room
+        'messages': messages,
+        'room': room,
+        'user': user,
     }
     return render(request, 'room/room_detail.html', context=context)
 

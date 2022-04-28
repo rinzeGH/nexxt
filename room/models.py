@@ -3,7 +3,6 @@ from django.db.models import Q
 from main.models import Profile
 
 
-
 class Room(models.Model):
     slug = models.SlugField(max_length=70, unique=True)
 
@@ -12,4 +11,10 @@ class Room(models.Model):
 
 
 class Message(models.Model):
-    pass
+    room = models.ForeignKey(Room, related_name='messages', on_delete=models.CASCADE,null=True)
+    profile = models.ForeignKey(Profile, related_name='messages', on_delete=models.CASCADE,null=True)
+    content = models.TextField(default='',null=True)
+    date_created = models.DateTimeField(auto_now_add=True,null=True)
+
+    class Meta:
+        ordering = ('date_created',)

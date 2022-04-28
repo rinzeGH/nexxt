@@ -1,59 +1,158 @@
-{% extends 'main/base.html' %}
-{% load tags%}
-
+{% extends 'base.html' %}
+{% load tags %}
+{% load static %}
 {% block user_buttons %}
 {% navbar_user_buttons request user profile%}
 {% endblock %}
 
 {% block content %}
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+      xmlns="http://www.w3.org/1999/html"/>
+<link href="{% static 'css/chat_detail.css' %}" rel="stylesheet"/>
 <div class="container">
-<div class="row clearfix">
-    <div class="col-lg-12">
-        <div class="card chat-app">
-            <div class="chat">
-                <div class="chat-header clearfix">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                            </a>
-                            <div class="chat-about">
-                                <h6 class="m-b-0">Aiden Chavez</h6>
-                                <small>Last seen: 2 hours ago</small>
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card chat-app">
+                <div class="chat">
+                    <div class="chat-header clearfix">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                {% for profile in room.profile.all %}
+                                {% if profile != user.profile %}
+                                {{ profile.slug|json_script:'json-profileslug' }}
+                                {% if profile.photo %}
+                                <a href="{{ profile.get_absolute.url }}" data-toggle="modal" data-target="#view_info">
+                                    <img src="{{ profile.photo.url }}" alt="avatar">
+                                </a>
+                                {% else %}
+                                <a href="{{ profile.get_absolute.url }}" data-toggle="modal" data-target="#view_info">
+                                    <img src="https://avatars.mds.yandex.net/get-pdb/1996600/d1725ec1-41d3-4b2c-ab24-91ec603557bf/s1200"
+                                         alt="avatar">
+                                    {% endif %}
+                                    <div class="chat-about">
+
+                                        <h6 class="m-b-0">{{ profile.first_name }}</h6>
+                                        <small>Last seen: 2 hours ago</small>
+
+
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                             </div>
+                            <div class="col-lg-6 hidden-sm text-right"> {% comment %}Иконки{%endcomment%}
+                                <a href="javascript:void(0);" class="btn btn-outline-secondary"><i
+                                        class="fa fa-camera"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-primary"><i
+                                        class="fa fa-image"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-info"><i
+                                        class="fa fa-cogs"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-warning"><i
+                                        class="fa fa-question"></i></a>
                             </div>
-                        </div>
-                        <div class="col-lg-6 hidden-sm text-right"> {% # Иконки # %}
-                            <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
                         </div>
                     </div>
-                </div>
-                <div class="chat-history">
-                    <ul class="m-b-0">
-                        <li class="clearfix">{% # сообщение # %}
-                            <div class="message-data text-right">
-                                <span class="message-data-time">10:10 AM, Today</span>
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
+                    <div class="chat-history">
+                        <ul class="m-b-0" id="chat-messages">
+                            {% for message in messages %}
+                            {% if message.profile != user.profile %}
+                            <li class="clearfix">{% comment %}сообщения{%endcomment%}
+                                <div class="message-data text-right">
+                                    <span class="message-data-time">{{message.date_created}}</span>
+
+                                </div>
+                                <div class="message other-message float-right">
+                                    {{message.content}}
+                                </div>
+                            </li>
+                            {% else %}
+                            {% comment %}сообщения друга{%endcomment%}
+                            <li class="clearfix">
+                                <div class="message-data">
+                                    <span class="message-data-time">{{message.date_created}}</span>
+                                </div>
+                                <div class="message my-message">{{message.content}}</div>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="chat-message clearfix">
+                        <div class="input-group mb-0">
+                            <form action="." method="post">
+                                {% csrf_token %}
+                            <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-send">
+                                    <button id="chat-message-submit">
+                                    </button>
+                                </i>
+                            </span>
+
                             </div>
-                            <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="chat-message clearfix">
-                    <div class="input-group mb-0">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-send"></i></span>
+                            <input id="chat-message-input" type="text" class="form-control"
+                                   placeholder="Enter text here...">{% comment %}ввод{%endcomment%}
+                            </form>
                         </div>
-                        <input type="text" class="form-control" placeholder="Enter text here...">{% # ввод # %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-</div>
+{{ room.slug|json_script:'json-roomslug' }}
+<script>
+    const roomSlug = JSON.parse(document.getElementById('json-roomslug').textContent);
+    const profileSlug = JSON.parse(document.getElementById('json-profileslug').textContent);
+
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        + roomSlug
+        + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        console.log('onmessage')
+
+        const data = JSON.parse(e.data);
+
+        if(data.message){
+            let html ='<li class="clearfix">';
+                html +='<div class="message-data text-right">';
+                html += '<span class="message-data-time">Только что</span></div>';
+                html += '<div class="message other-message float-right">'+ data.message +'</div></li>';
+
+            document.querySelector('#chat-messages').innerHTML += html;
+
+        } else {
+            alert('The message is empty');
+        }
+    }
+
+    chatSocket.onclose = function(e){
+        console.log('onclose')
+    }
+
+    //
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        e.preventDefault();
+
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'profile': profileSlug,
+            'room': roomSlug
+        }));
+
+        messageInputDom.value = '';
+
+        return false;
+    }
+    
+
+</script>
 {% endblock %}
